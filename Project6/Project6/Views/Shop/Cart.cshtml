@@ -1,0 +1,370 @@
+﻿@model IEnumerable<Project6.Models.CartViewModel>
+
+@{
+    ViewBag.Title = "Cart";
+}
+<style>
+    body {
+        background-color: #FFFAF0;
+    }
+</style>
+<h2>Your Shopping Cart</h2>
+
+@if (!Model.Any())
+{
+    <p>Your cart is empty. <a href="@Url.Action("CategoryProducts", "Shop")">Continue shopping</a>.</p>
+}
+else
+{
+    <div class="cart-container" >
+        <table class="table cart-table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var product = item.Product;
+                    if (product != null)
+                    {
+                        <tr>
+                            <td class="product-info">
+                                <img src="@product.ImageURL" alt="@product.Name" class="product-image" />
+                                <span>@product.Name</span>
+                            </td>
+                            <td>
+                                <div class="quantity-container">
+                                    <button type="button" class="btn btn-sm btn-light" onclick="updateQuantity('@item.CartItem.ID', -1)">-</button>
+                                    <input type="text" id="quantity-@item.CartItem.ID" class="quantity-input" value="@item.CartItem.Quantity" readonly />
+                                    <button type="button" class="btn btn-sm btn-light" onclick="updateQuantity('@item.CartItem.ID', 1)">+</button>
+                                </div>
+                            </td>
+                            <td>
+                                @string.Format("{0:C}", product.Price)
+                            </td>
+                            <td>
+                                @string.Format("{0:C}", item.CartItem.Quantity * product.Price)
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-danger" data-id="@item.CartItem.ID" onclick="confirmRemove(this)">
+                                        Remove From My Order
+                                    </a>
+                                </div>
+                            </td>
+
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        <div class="cart-summary">
+            <div class="discount-tag" style="display: @(Model.Sum(item => item.CartItem.Quantity * item.Product.Price) > 100 ? "block" : "none");">15% Off</div>
+            <h3>Cart Summary</h3>
+            @{
+                var total = Model.Sum(item => item.CartItem.Quantity * item.Product.Price);
+                var discount = 0.15;
+                var BigTotal = total > 100 ? total - (total * discount) : total;
+
+                Session["BigTotal"] = BigTotal;
+            }
+            <p>
+                Total: <span class="total-price">@string.Format("{0:C}", total)</span>
+            </p>
+            @if (total > 100)
+            {
+                <p>Discount over $100: 15%</p>
+                <p>Total After Discount: @string.Format("{0:C}", BigTotal)</p>
+            }
+
+           
+        <form id="checkoutForm" action="@Url.Action("Checkout", "Shop")" method="post">
+           
+            <button type="submit" class="btn btn-primary">Checkout</button>
+        </form>
+                <a href="@Url.Action("GenerateInvoice", "Shop")" class="btn btn-invoice">Generate Invoice</a>
+            
+
+        </div>
+    </div>
+}
+
+<script>
+    function updateQuantity(cartItemId, change) {
+        var input = document.getElementById('quantity-' + cartItemId);
+        var currentQuantity = parseInt(input.value);
+        var newQuantity = currentQuantity + change;
+
+        if (newQuantity < 1) {
+            newQuantity = 1;
+        }
+
+        input.value = newQuantity;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '@Url.Action("UpdateQuantity", "Shop")', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            cartItemId: cartItemId,
+            quantity: newQuantity
+        }));
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                location.reload();
+            }
+        };
+    }
+</script>
+<script>
+    function confirmRemove(element) {
+        const cartItemId = element.getAttribute('data-id');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#153448',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Perform the delete action
+                removeItem(cartItemId);
+            }
+        });
+    }
+
+    function removeItem(cartItemId) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '@Url.Action("DeleteItem", "Shop")', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('RequestVerificationToken', $('input[name="__RequestVerificationToken"]').val());
+        xhr.send(JSON.stringify({ id: cartItemId }));
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                Swal.fire(
+                    'Deleted!',
+                    'Your item has been removed.',
+                    'success'
+                ).then(() => {
+                    location.reload(); // Reload the page to reflect changes
+                });
+            } else {
+                Swal.fire(
+                    'Error!',
+                    'There was a problem removing the item.',
+                    'error'
+                );
+            }
+        };
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const checkoutForm = document.getElementById('checkoutForm');
+
+    checkoutForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        Swal.fire({
+            title: 'Processing...',
+            text: 'Please wait while we process your order.',
+            icon: 'info',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading(); // Show loading animation
+            }
+        });
+
+        // Create FormData object to send the form data
+        const formData = new FormData(checkoutForm);
+
+        fetch(checkoutForm.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    title: 'Purchase Successful!',
+                    text: 'Thank you for your order!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Redirect to Categories action
+                    window.location.href = '@Url.Action("Categories", "Shop")';
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was a problem with your purchase.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was a problem with your request.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    });
+});
+
+</script>
+
+<style>
+    .cart-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        padding: 20px;
+        background-color: #F8F9FA;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .cart-table th, .cart-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .cart-table th {
+            background-color: #153448;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .cart-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .product-image {
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+        object-fit: cover;
+    }
+
+    .actions .btn {
+        margin-right: 5px;
+    }
+
+    .quantity-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .quantity-input {
+        width: 60px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+
+    .btn-light {
+        background-color: #F8F9FA;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btn-light:hover {
+            background-color: #e9ecef;
+        }
+
+    .cart-summary {
+        background-color: #DFD0B8;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        text-align: right;
+        position: relative;
+        margin-top: 20px;
+    }
+
+        .cart-summary h3 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            color: #3C5B6F;
+            font-weight: bold;
+        }
+
+        .cart-summary p {
+            margin: 10px 0;
+            font-size: 1.2em;
+            color: #153448;
+        }
+
+    .total-price {
+        font-weight: bold;
+        color: #153448;
+        font-size: 1.8em;
+    }
+
+    .discount-tag {
+        position: absolute;
+        top: -20px;
+        right: 20px;
+        background-color: #3C5B6F;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 10px;
+        font-size: 1em;
+        font-weight: bold;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-checkout {
+        background-color: #153448;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 8px;
+        text-transform: uppercase;
+        font-size: 1.1em;
+        transition: background-color 0.3s, transform 0.3s;
+        display: inline-block;
+        margin-top: 15px;
+    }
+
+        .btn-checkout:hover {
+            background-color: #3C5B6F;
+            transform: scale(1.05);
+        }
+</style>

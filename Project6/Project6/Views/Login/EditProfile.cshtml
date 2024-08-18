@@ -1,0 +1,127 @@
+﻿@model Project6.Models.USER
+
+@{
+    ViewBag.Title = "EditProfile";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/your-custom-styles.css" /> <!-- Link to your CSS file -->
+
+<h2>Edit Profile</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <center>
+        <div class="form-horizontal" style="width: 100%; max-width: 600px;">
+         
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.ID)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label" })
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group text-center">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    </center>
+}
+
+<div class="text-center mt-4">
+    @Html.ActionLink("Back to My Account", "ProfilePage", new { id = Model.ID }, new { @class = "btn btn-secondary" })
+</div>
+
+<style>
+    /* Professional Styles for Edit Profile Page */
+    body {
+        background-color: #FAFAFA; /* Light Gray Background for a clean look */
+    }
+
+    h2 {
+        color: #3C5B6F; /* Darker Blue */
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: 600; /* Slightly bolder for better emphasis */
+    }
+
+    .form-horizontal {
+        background-color: #FFFFFF; /* White background for contrast */
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Deeper shadow for a more modern look */
+    }
+
+    .control-label {
+        color: #153448; /* Dark Teal */
+        font-weight: 600; /* Make labels stand out */
+        margin-bottom: 10px;
+        text-align: left; /* Align labels to the left for a professional look */
+    }
+
+    .form-control {
+        border: 1px solid #3C5B6F; /* Darker Blue */
+        border-radius: 6px;
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        background-color: #3C5B6F; /* Darker Blue */
+        color: #FFFFFF;
+        border: none;
+        border-radius: 6px;
+        padding: 12px 24px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-weight: 600;
+    }
+
+        .btn-primary:hover {
+            background-color: #153448; /* Dark Teal */
+        }
+
+    .btn-secondary {
+        background-color: #DFD0B8; /* Light Beige */
+        color: #153448; /* Dark Teal */
+        border: 1px solid #153448;
+        border-radius: 6px;
+        padding: 12px 24px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-weight: 600;
+    }
+
+        .btn-secondary:hover {
+            background-color: #3C5B6F; /* Darker Blue */
+            color: #FFFFFF;
+            border-color: #3C5B6F;
+        }
+
+    .text-danger {
+        color: #E74C3C; /* Slightly brighter red for error messages */
+        font-weight: 600;
+        margin-top: 5px;
+    }
+
+    hr {
+        border: 1px solid #DFD0B8; /* Light Beige */
+        margin-bottom: 30px;
+    }
+
+    .mt-4 {
+        margin-top: 1.5rem !important;
+    }
+</style>

@@ -1,0 +1,172 @@
+﻿@{
+    ViewBag.Title = "Login";
+}
+
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get success parameter from the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var success = urlParams.get('success');
+
+        if (success === 'true') {
+            // Show SweetAlert2 alert
+            Swal.fire({
+                title: 'Registration Successful!',
+                text: 'You can now log in.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect to login page
+                    window.location.href = '@Url.Action("Login", "Login")';
+                }
+            });
+        }
+    });
+</script>
+
+<!-- Your login form or content here -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Login & Registration Form</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .bg-image-vertical {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #DFD0B8 0%, #4F697A 100%);
+            background-size: cover;
+            height: 100vh; /* Ensure the background covers the full viewport height */
+        }
+
+        .form-container {
+            width: 30rem; /* Adjusted width of the form container */
+            max-width: 100%;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 10px; /* Optional: rounded corners */
+            background: transparent; /* No background color */
+        }
+
+            .form-container form {
+                width: 100%;
+            }
+
+            .form-container .form-outline input {
+                width: 100%; /* Ensure the inputs use full width of the form container */
+            }
+
+        /* Styling for the form elements */
+        .form-outline {
+            margin-bottom: 1.5rem; /* Adjust spacing between form elements */
+        }
+
+        .form-control {
+            border: 1px solid #3C5B6F; /* Dark blue border for inputs */
+            border-radius: 5px; /* Rounded corners for inputs */
+            padding: 0.75rem; /* Padding inside inputs */
+        }
+
+            .form-control:focus {
+                border-color: #DFD0B8; /* Light color border on focus */
+                box-shadow: none; /* Remove the shadow on focus */
+            }
+
+        .btn-info {
+            background-color: #DFD0B8; /* Button background color */
+            color: #3C5B6F; /* Button text color */
+            width: fit-content;
+        }
+
+            .btn-info:hover {
+                background-color: #d1b89b; /* Slightly darker button background on hover */
+            }
+
+        .form-container h4 {
+            color: #3C5B6F; /* Heading color */
+        }
+
+        .form-label {
+            color: #3C5B6F; /* Label color */
+        }
+
+        .link-info {
+            color: #DFD0B8; /* Register link color */
+        }
+
+            .link-info:hover {
+                color: #d1b89b; /* Slightly darker register link color on hover */
+            }
+
+        .text-muted {
+            color: #6c757d; /* Slightly muted color for other text */
+        }
+    </style>
+</head>
+<body>
+    <section class="vh-100 bg-image-vertical">
+        <div class="container-fluid h-100 d-flex align-items-center justify-content-center">
+            <div class="row w-100">
+                <div class="col-sm-6 d-flex align-items-center justify-content-center text-black">
+                    <div class="form-container">
+                        <div class="px-5 ms-xl-4 text-center">
+                            <i class="fas fa-crow fa-2x me-3 pt-5 mt-xl-4" style="color: #709085;"></i>
+                            <img src="~/Content/AgateLogo1.png" style="width:177px; height:90px;" />
+                        </div>
+                        <br />  <br />
+                        <div class="d-flex align-items-center h-custom-2 px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
+                            <form method="post" action="@Url.Action("Login", "Login")" style="width: 100%;">
+                                <center>
+                                    <br />  <br />
+                                    <h4 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Log in to drink the best organic coffee in the World!</h4>
+
+                                    <div data-mdb-input-init class="form-outline mb-4">
+                                        <label class="form-label" for="form2Example18">Email address</label>
+                                        <input type="email" name="Email" id="form2Example18" class="form-control form-control-lg" />
+                                    </div>
+
+                                    <div data-mdb-input-init class="form-outline mb-4">
+                                        <label class="form-label" for="form2Example28">Password</label>
+                                        <input type="password" name="Password" id="form2Example28" class="form-control form-control-lg" />
+                                    </div>
+                                    <center>
+                                        <div class="pt-1 mb-4">
+                                            <button data-mdb-button-init data-mdb-ripple-init class="btn btn-info btn-lg btn-block" type="submit">Login</button>
+                                        </div>
+
+                                        <p style="color: floralwhite;">
+                                            Don't have an account?
+                                            <span style="color: white;">
+                                                @Html.ActionLink("Register Here!", "Register", null, new { style = "color: white;" })
+                                            </span>
+                                        </p>
+
+                                    </center>
+</form>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 px-0 d-none d-sm-block">
+                    <img src="~/Content/purepng.com-coffee-beansfood-coffee-beans-grains-941524620178acrzp.png"
+                         alt="Login image" class="w-100 vh-100" style="object-fit: cover; object-position: left;">
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="script.js"></script>
+</body>
+</html>

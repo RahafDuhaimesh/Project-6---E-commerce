@@ -1,0 +1,54 @@
+﻿<!-- Include SweetAlert2 CSS and JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<form id="checkoutForm" action="@Url.Action("Checkout", "Shop")" method="post">
+    <div class="form-group">
+        <label for="PaymentID">Payment ID</label>
+        <input type="text" id="PaymentID" name="PaymentID" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Checkout</button>
+</form>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkoutForm = document.getElementById('checkoutForm'); // Assuming your form has this ID
+
+        checkoutForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = new FormData(checkoutForm); // Get form data
+
+            fetch(checkoutForm.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Purchase Successful!',
+                        text: 'Thank you for your order!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '@Url.Action("Cart", "Shop")'; // Redirect to cart or another page
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was a problem with your purchase.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was a problem with your request.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            });
+        });
+    });
+</script>

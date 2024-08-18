@@ -1,0 +1,434 @@
+﻿@model Project6.Models.ProductDetailsViewModel
+
+@{
+    ViewBag.Title = "Product Details";
+}
+
+<div class="product-details-container">
+    <h2 class="page-title">Product Details</h2>
+    <div class="product-details-card">
+        <div class="product-image-section">
+            <img src="@Model.Product.ImageURL" alt="@Model.Product.Name" class="product-details-image" />
+        </div>
+        <div class="product-info-section">
+            <h3 class="product-name">@Model.Product.Name</h3>
+            <p class="product-price">$@Model.Product.Price</p>
+            <p class="product-description">@Model.Product.Description</p>
+            <p class="product-category">Category: @Model.Product.Category.Name</p>
+
+            <div class="add-to-cart-container">
+                <form action="@Url.Action("AddToCart", "Shop")" method="post" class="add-to-cart-form" id="addToCartForm">
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("ProductID", Model.Product.ID)
+
+                    <div class="quantity-container">
+                        <button type="button" class="quantity-btn" id="decrement">-</button>
+                        <input type="number" name="Quantity" id="quantityInput" value="1" min="1" class="quantity-input" />
+                        <button type="button" class="quantity-btn" id="increment">+</button>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="addToCartBtn"><i class="fas "></i> Add to Cart</button>
+                    <a href="@Url.Action("CategoryProducts", "Shop", new { id = Model.Product.Category.ID })" class="btn btn-secondary" id="viewCategoryBtn">
+                        <i class="fas fa-th-list"></i> View Category Products
+                    </a>
+                </form>
+                <span id="successIcon" class="success-icon" style="display:none;"><i class="fas"></i></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="customer-reviews" style="background-color: #bebebe;">
+        <h3 style="color : #153448; "><b> Customer Reviews</b></h3>
+
+            <h4 style="color : #153448"><i class="fas fa-pencil-alt"></i> Leave a Review</h4><br />
+            @using (Html.BeginForm("LeaveReview", "Shop", FormMethod.Post, new { id = "reviewForm" } ))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Product.ID)
+
+                <div style="display: flex; flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 150px; color: #153448;">
+                        @Html.LabelFor(model => model.Review.UserName, new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Review.UserName, new { @class = "form-control form-input", style = "width: 100%;" })
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 200px; color: #153448;">
+                        @Html.LabelFor(model => model.Review.Rating, new { @class = "form-label" })
+                        @Html.DropDownListFor(model => model.Review.Rating, new SelectList(new[]
+                             {
+                                new { Value = 5, Text = "★★★★★ - Excellent" },
+                                new { Value = 4, Text = "★★★★☆ - Good" },
+                                new { Value = 3, Text = "★★★☆☆ - Average" },
+                                new { Value = 2, Text = "★★☆☆☆ - Poor" },
+                                new { Value = 1, Text = "★☆☆☆☆ - Terrible" }
+                            }, "Value", "Text"), new { @class = "form-control stars-dropdown form-input", style = "width: 100%;" })
+                    </div>
+                    <div class="form-group" style="flex: 1; color: #153448">
+                        @Html.LabelFor(model => model.Review.Content, new { @class = "form-label" })
+                        @Html.TextAreaFor(model => model.Review.Content, new { @class = "form-control form-textarea", style = "width: 100%;" })
+                    </div>
+                </div>
+
+                <div class="form-submit-container" style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn btn-primary" id="submitReviewBtn">Submit Review</button>
+                </div>
+            }
+        
+
+
+        @if (Model.Reviews.Any())
+        {
+            <div class="reviews-list">
+                @foreach (var review in Model.Reviews)
+                {
+                    <div class="review-card">
+                        <div class="review-header">
+                            <h4>@review.UserName </h4><br />
+                            <p class="rating">Rating: @string.Concat(Enumerable.Repeat("★", review.Rating.GetValueOrDefault()))@string.Concat(Enumerable.Repeat("☆", 5 - review.Rating.GetValueOrDefault()))</p><br />
+                        </div>
+                        <p class="review-text">@review.Content</p>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+    <p style="color : #153448 ">No reviews yet. Be the first to review this product!</p>
+        }
+
+    </div>
+</div>
+
+<!-- Include SweetAlert script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const quantityInput = document.getElementById('quantityInput');
+        const decrementButton = document.getElementById('decrement');
+        const incrementButton = document.getElementById('increment');
+        const addToCartForm = document.getElementById('addToCartForm');
+        const reviewForm = document.getElementById('reviewForm');
+
+        decrementButton.addEventListener('click', function () {
+            let currentQuantity = parseInt(quantityInput.value, 10);
+            if (currentQuantity > 1) {
+                quantityInput.value = currentQuantity - 1;
+            }
+        });
+
+        incrementButton.addEventListener('click', function () {
+            let currentQuantity = parseInt(quantityInput.value, 10);
+            quantityInput.value = currentQuantity + 1;
+        });
+
+        addToCartForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+            Swal.fire({
+                icon: 'success',
+                title: 'Added to Cart',
+                text: 'The product has been added to your cart!',
+                confirmButtonColor: '#153448'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    addToCartForm.submit(); // Proceed with the form submission
+                }
+            });
+        });
+
+        reviewForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+            Swal.fire({
+                icon: 'success',
+                title: 'Review Submitted',
+                text: 'Your review has been submitted successfully!',
+                confirmButtonColor: '#153448'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    reviewForm.submit(); // Proceed with the form submission
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    body {
+        background-color: #f5f5f5;
+        font-family: 'Zen Kurenaido', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .product-details-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-title {
+        font-size: 2.5em;
+        color: #153448;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .product-details-card {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 20px;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .product-image-section {
+        flex: 1 1 40%;
+        max-width: 100%;
+    }
+
+    .product-details-image {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-height: 400px;
+        object-fit: cover;
+    }
+
+    .product-info-section {
+        flex: 1 1 55%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .product-name {
+        font-size: 2em;
+        color: #153448;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .product-price {
+        font-size: 1.5em;
+        color: #3C5B6F;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .product-description {
+        font-size: 1.2em;
+        color: #555;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .product-category {
+        font-size: 1.1em;
+        color: #888;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .add-to-cart-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .add-to-cart-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .quantity-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .quantity-input {
+        width: 60px;
+        padding: 5px;
+        text-align: center;
+        font-size: 1.2em;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    .quantity-btn {
+        padding: 5px 10px;
+        font-size: 1.2em;
+        background-color: #3C5B6F;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .quantity-btn:active {
+        transform: scale(0.95);
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1.1em;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #153448;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #3C5B6F;
+    }
+
+    .btn-secondary {
+        background-color: #3C5B6F;
+        color: #fff;
+    }
+
+    .btn-secondary:hover {
+        background-color: #153448;
+    }
+
+    .success-icon {
+        color: #28a745;
+        font-size: 2em;
+        margin-left: 10px;
+    }
+
+    .customer-reviews {
+        margin-top: 30px;
+        padding-top: 20px;
+        background-color: #153448;
+        border-radius: 10px;
+        padding: 20px;
+        color: #DFD0B8;
+    }
+
+    .customer-reviews h3 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+    .review-form {
+        display: flex;
+        flex-direction: row; /* Align elements in a row */
+        gap: 20px;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 100%;
+        margin: auto;
+        align-items: flex-start; /* Align items to the top */
+        flex-wrap: wrap; /* Allow wrapping if necessary */
+    }
+
+        .review-form .form-group {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 10px; /* Add some spacing between rows */
+        }
+
+            .review-form .form-group:last-child {
+                flex-basis: 100%; /* Make the textarea take up full width */
+            }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .form-textarea {
+        min-height: 100px;
+    }
+
+    .form-submit-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%; /* Make the submit button container full width */
+    }
+
+    .btn-primary {
+        background-color: #153448;
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 1.1em;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #3C5B6F;
+        }
+
+    .reviews-list {
+        margin-top: 20px;
+    }
+
+    .review-card {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: #000;
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .rating {
+        font-size: 1.2em;
+        color: #153448;
+    }
+
+    .review-text {
+        font-size: 1.1em;
+        color: #555;
+    }
+
+    @@media (max-width: 768px) {
+        .product-details-card {
+            flex-direction: column;
+        }
+
+        .product-image-section, .product-info-section {
+            flex: 1 1 100%;
+        }
+
+        .add-to-cart-container {
+            flex-direction: column;
+        }
+
+        .review-form-row {
+            flex-direction: column;
+        }
+
+        .form-group {
+            flex: 1 1 100%;
+        }
+    }
+</style>

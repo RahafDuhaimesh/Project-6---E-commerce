@@ -1,0 +1,43 @@
+﻿@model Project6.Models.USER
+
+@{
+    ViewBag.Title = "Delete Profile";
+}
+
+<!-- Add jQuery and Bootstrap for modal functionality -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<!-- Modal HTML -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete your account?
+            </div>
+            <div class="modal-footer">
+                @using (Html.BeginForm("DeleteProfileConfirm", "Login", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("id", Model.ID)
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trigger button for modal -->
+<div class="container mt-5">
+    <div class="text-center">
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete My Account</button>
+    </div>
+</div>

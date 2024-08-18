@@ -1,0 +1,133 @@
+﻿@model IEnumerable<Project6.Models.Product>
+
+@{
+    ViewBag.Title = "CategoryProducts";
+}
+
+
+<form action="@Url.Action("AddAllToCart", "Shop")" method="post">
+    <div class="card-container">
+        @foreach (var item in Model)
+        {
+            <div class="card">
+                <img src="@item.ImageURL" alt="@item.Name" class="product-image" />
+                <div class="card-content">
+                    <h3>@item.Name</h3>
+                    <p class="price">@item.Price $</p>
+                    <div class="static-rating">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <span class="star @(i <= 5 ? "filled" : "empty")">★</span> 
+                        }
+                    </div>
+                    
+                    <a href="@Url.Action("ProductDetails", "Shop", new { id = item.ID })" class="details-link">View Details</a>
+                </div>
+            </div>
+        }
+    </div>
+    <button type="submit" class="btn btn-primary" style="display:none"></button>
+</form>
+
+
+<style>
+    body {
+        background-color: #f8f9fa; /* Light background for contrast */
+    }
+
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 20px;
+    }
+
+    .card {
+        background-color: #DFD0B8; /* Light color for cards */
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin: 15px;
+        padding: 20px;
+        width: 300px; /* Width of each card */
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-align: center; /* Center text in the card */
+        position: relative; /* Position relative for absolute children */
+        overflow: hidden; /* Hide overflow for description */
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+    .product-image {
+        width: 100%; /* Make the image responsive */
+        height: 250px; /* Fixed height for constant size */
+        object-fit: cover; /* Maintain aspect ratio and cover the area */
+        border-radius: 10px 10px 0 0; /* Rounded corners on top */
+    }
+
+    .card-content {
+        padding: 10px 0; /* Padding for content */
+    }
+
+    .description {
+        display: none; /* Hide description by default */
+        margin: 10px 0; /* Margin for spacing */
+    }
+
+    .card:hover .description {
+        display: block; /* Show description on hover */
+    }
+
+    .price {
+        font-size: 1.5em;
+        color: #3C5B6F; /* Darker color for price */
+    }
+
+    .quantity-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+        gap: 10px; /* Space between elements */
+    }
+
+    .quantity {
+        width: 50px;
+        text-align: center;
+        border: 1px solid #3C5B6F; /* Border for the input box */
+        border-radius: 5px; /* Rounded corners */
+        padding: 5px; /* Padding for input */
+        font-size: 1em; /* Font size */
+    }
+
+
+    .details-link {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #153448; /* Darkest color for the link */
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+        .details-link:hover {
+            background-color: #3C5B6F; /* Change color on hover */
+        }
+
+    .static-rating {
+        margin-top: 10px;
+        font-size: 1.5em; /* Font size for stars */
+    }
+
+        .static-rating .star {
+            color: #FFD700; /* Gold color for stars */
+        }
+
+            .static-rating .star.empty {
+                color: #E0E0E0; /* Light grey for empty stars */
+            }
+</style>

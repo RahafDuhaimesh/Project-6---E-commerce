@@ -1,0 +1,152 @@
+﻿
+@model IEnumerable<Project6.Models.Category>
+
+@{
+    ViewBag.Title = "Categories";
+}
+
+<style>
+
+
+    /* Ensure the container takes the full width and handles overflow */
+    .full-width-container {
+        /* Full viewport width */
+        margin: 0; /* Remove default margin */
+        padding: 0; /* Remove default padding */
+        overflow-x: hidden; /* Prevent horizontal overflow */
+        box-sizing: border-box; /* Ensure padding and border do not affect width */
+    }
+
+    /* Reset body margin and padding */
+    body {
+        margin: 0; /* Remove default body margin */
+        padding: 0; /* Remove default body padding */
+        background-color: floralwhite; /* Background color */
+        box-sizing: border-box; /* Ensure padding and border do not affect width */
+    }
+
+    /* Styles for category cards */
+    .category-card {
+        position: relative; /* Allows overlay positioning */
+        border: 1px solid #3C5B6F; /* Border color for the card */
+        border-radius: 8px;
+        overflow: hidden; /* Ensures overlay does not overflow */
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation for hover effect */
+    }
+
+        .category-card img {
+            height: 200px; /* Fixed height for images */
+            object-fit: cover; /* Ensures image covers the area without distortion */
+        }
+
+        .category-card:hover {
+            transform: scale(1.05); /* Slightly enlarge the card on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow effect on hover */
+        }
+
+    .card-body {
+        background-color: #DFD0B8; /* Background color for card body */
+        color: #153448; /* Text color in the card body */
+    }
+
+    .card-title {
+        color: #3C5B6F; /* Card title color */
+    }
+
+    .btn-primary {
+        background-color: #3C5B6F; /* Button background color */
+        border-color: #3C5B6F; /* Button border color */
+        color: #DFD0B8; /* Button text color */
+    }
+
+        .btn-primary:hover {
+            background-color: #153448; /* Darker shade on hover */
+            border-color: #153448; /* Darker border color on hover */
+            color: #DFD0B8; /* Button text color on hover */
+        }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease; /* Animation for showing the overlay */
+        color: #DFD0B8; /* Button text color */
+        text-align: center;
+    }
+
+    .category-card:hover .overlay {
+        opacity: 1; /* Show overlay on hover */
+    }
+
+    .overlay a {
+        color: #DFD0B8; /* Button text color */
+        font-size: 1.2em; /* Font size for the button */
+    }
+</style>
+<div><img src="~/Content/Screenshot 2024-08-18 145445.png" style="width:100%; height:100vh" /></div>
+<!-- Main container with a background color --><br /><br />
+<div class="container" ><center>
+    <h1> Discover more than 20 coffee types!</h1><br />
+</center>
+    <div class="row">
+        @foreach (var item in Model.Take(3))
+        {
+            <div class="col-md-4 mb-4">
+                <div class="category-card card">
+                    <img src="@item.ImageURL" class="card-img-top" alt="@item.Name" />
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                    </div>
+                    <div class="overlay">
+                        <a href="@Url.Action("CategoryProducts","Shop", new { id = item.ID })" class="btn btn-primary">Discover the Products</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<br /><br /><br /><br /><br />
+<div class="container-fluid">
+    <div class="row">
+        <!-- Carousel Section -->
+        <div class="col-md-6">
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img class="d-block w-100"  src="https://www.creationdelicia.com/wp-content/uploads/2020/01/Coeur-de-dattes-Creation-Delicia.jpg" alt="First slide" style="max-height: 450px; border-radius: 15px">
+                    </div>
+                    <div class="carousel-item">
+                        <img class="d-block w-100" src="https://www.creationdelicia.com/wp-content/uploads/2020/01/alternative-au-cafe%CC%81.jpg" alt="Second slide" style="max-height: 450px; border-radius: 15px">
+                    </div>
+                    <div class="carousel-item">
+                        <img class="d-block w-100" src="https://www.creationdelicia.com/wp-content/uploads/2020/01/Coeur-de-dattes.jpg" alt="Third slide" style="max-height: 450px; border-radius: 15px ">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Text Section -->
+        <div class="col-md-6 d-flex align-items-center">
+            <div>
+                <h2>Discover The Organic Coffee World!</h2>
+                <p>Embark on a journey through the rich and flavorful world of organic coffee. Sourced from the finest farms that prioritize sustainable and eco-friendly practices, our organic coffee offers a unique blend of taste and aroma. </p>
+            </div>
+        </div>
+    </div>
+</div>
+

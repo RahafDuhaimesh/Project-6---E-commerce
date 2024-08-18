@@ -1,0 +1,125 @@
+﻿@model IEnumerable<Project6.Models.Category>
+
+@{
+    ViewBag.Title = "Categories";
+}
+
+<style>
+    /* Ensure no overflow and full width for the image */
+    .full-width-image {
+        width: 100%; /* Full width of the container */
+        height: auto; /* Maintain aspect ratio */
+        display: block; /* Remove any default spacing around the image */
+        margin: 0; /* Remove margin if present */
+        padding: 0; /* Remove padding if present */
+        box-sizing: border-box; /* Ensure padding and border do not affect width */
+    }
+
+    /* Ensure the container takes the full width and handles overflow */
+    .full-width-container {
+         /* Full viewport width */
+        margin: 0; /* Remove default margin */
+        padding: 0; /* Remove default padding */
+        overflow-x: hidden; /* Prevent horizontal overflow */
+        box-sizing: border-box; /* Ensure padding and border do not affect width */
+    }
+
+    /* Reset body margin and padding */
+    body {
+        margin: 0; /* Remove default body margin */
+        padding: 0; /* Remove default body padding */
+        background-color: #153448; /* Background color */
+        box-sizing: border-box; /* Ensure padding and border do not affect width */
+    }
+
+    /* Styles for category cards */
+    .category-card {
+        position: relative; /* Allows overlay positioning */
+        border: 1px solid #3C5B6F; /* Border color for the card */
+        border-radius: 8px;
+        overflow: hidden; /* Ensures overlay does not overflow */
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation for hover effect */
+    }
+
+        .category-card img {
+            height: 200px; /* Fixed height for images */
+            object-fit: cover; /* Ensures image covers the area without distortion */
+        }
+
+        .category-card:hover {
+            transform: scale(1.05); /* Slightly enlarge the card on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow effect on hover */
+        }
+
+    .card-body {
+        background-color: #DFD0B8; /* Background color for card body */
+        color: #153448; /* Text color in the card body */
+    }
+
+    .card-title {
+        color: #3C5B6F; /* Card title color */
+    }
+
+    .btn-primary {
+        background-color: #3C5B6F; /* Button background color */
+        border-color: #3C5B6F; /* Button border color */
+        color: #DFD0B8; /* Button text color */
+    }
+
+        .btn-primary:hover {
+            background-color: #153448; /* Darker shade on hover */
+            border-color: #153448; /* Darker border color on hover */
+            color: #DFD0B8; /* Button text color on hover */
+        }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease; /* Animation for showing the overlay */
+        color: #DFD0B8; /* Button text color */
+        text-align: center;
+    }
+
+    .category-card:hover .overlay {
+        opacity: 1; /* Show overlay on hover */
+    }
+
+    .overlay a {
+        color: #DFD0B8; /* Button text color */
+        font-size: 1.2em; /* Font size for the button */
+    }
+</style>
+
+<!-- Full width container for the image -->
+<div class="full-width-container">
+    <img src="~/Content/Screenshot 2024-08-17 145118.png" class="full-width-image" /><br /><br />
+</div><center>
+    <h1 style="color: #DFD0B8">Discover The Products!</h1>
+</center><br />
+<!-- Main container with a background color -->
+<div class="container" style="background-color: #153448;">
+    <div class="row">
+        @foreach (var item in Model.Take(3))
+        {
+            <div class="col-md-4 mb-4">
+                <div class="category-card card">
+                    <img src="@item.ImageURL" class="card-img-top" alt="@item.Name" />
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                    </div>
+                    <div class="overlay">
+                        <a href="@Url.Action("CategoryProducts", new { id = item.ID })" class="btn btn-primary">Discover the Products</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

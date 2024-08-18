@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Project6.Models.Order>
+
+@{
+    ViewBag.Title = "My Orders";
+}
+
+<h2 class="text-center my-4" style="color: #153448;">My Orders</h2>
+
+<div class="container">
+    <table class="table table-bordered table-striped">
+        <thead style="background-color: #3C5B6F; color: #DFD0B8;">
+            <tr>
+                <th>Date Of Purchase</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr style="background-color: floralwhite; color: #153448;">
+                    <td>@Html.DisplayFor(modelItem => item.DateOfPurchase)</td>
+                    <td>
+                        @Html.ActionLink("Details", "orderItems", new { id = item.ID }, new { @class = "btn btn-sm btn-info" }) |
+                        @Html.ActionLink("Invoice", "Invoice", new { id = item.ID }, new { @class = "btn btn-sm btn-secondary" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Additional Styles -->
+<style>
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .btn-info {
+        background-color: #3C5B6F;
+        border-color: #3C5B6F;
+        color: #DFD0B8;
+    }
+
+    .btn-secondary {
+        background-color: #153448;
+        border-color: #153448;
+        color: #DFD0B8;
+    }
+
+        .btn-info:hover, .btn-secondary:hover {
+            opacity: 0.8;
+        }
+</style>

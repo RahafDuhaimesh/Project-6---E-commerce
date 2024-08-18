@@ -1,0 +1,164 @@
+﻿@model Project6.Models.USER
+
+@{
+    ViewBag.Title = "Profile Page";
+}
+
+<!-- Add jQuery and Bootstrap for modal functionality -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Modal HTML -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete your account?
+            </div>
+            <div class="modal-footer">
+                @using (Html.BeginForm("DeleteProfileConfirm", "Login", FormMethod.Post, new { id = "deleteForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("id", Model.ID)
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="card">
+        <center>
+            <div class="card-header">
+                <h2 class="mb-0">Profile Page</h2>
+            </div>
+        </center>
+        <div class="card-body">
+            <div class="card-content">
+                <div class="details">
+                    <center>
+                        <h4>Welcome @Html.DisplayFor(model => model.Name)!</h4>
+                        <hr />
+                        <dl class="user-details">
+                            <dt>@Html.DisplayNameFor(model => model.Email)</dt>
+                            <dd>@Html.DisplayFor(model => model.Email)</dd>
+
+                            <dt>@Html.DisplayNameFor(model => model.Name)</dt>
+                            <dd>@Html.DisplayFor(model => model.Name)</dd>
+
+                            <dt>@Html.DisplayNameFor(model => model.City)</dt>
+                            <dd>@Html.DisplayFor(model => model.City)</dd>
+                            <br />
+                            <br />
+                            <div style="margin-top:20px">
+                                @Html.ActionLink("Edit Profile", "EditProfile", new { id = Model.ID }, new { @class = "btn btn-primary" })
+                                @Html.ActionLink("Reset Password", "EditPassword", new { id = Model.ID }, new { @class = "btn btn-primary" })
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete My Account</button>
+                            </div>
+                        </dl>
+                    </center></div>
+                <div class="photo">
+                    <img src="~/Content/nathan-dumlao-vbt-Fp3b5FA-unsplash-scaled.jpg" alt="Profile Photo" class="profile-photo" />
+                </div>
+            </div>
+          
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #DFD0B8;
+        font-family: 'Zen Kurenaido', sans-serif;
+        font-size: 16px; /* Base font size */
+    }
+
+    .card {
+        border: 1px solid #3C5B6F; /* Border color for the card */
+        border-radius: 8px;
+    }
+
+    .card-header {
+        background-color: #3C5B6F; /* Header background color */
+        color: #DFD0B8; /* Header text color */
+    }
+
+    .card-body {
+        background-color: #FFFFFF; /* White background for card body */
+        color: #153448; /* Text color in the body */
+        padding: 1rem;
+    }
+
+    .card-footer {
+        background-color: #DFD0B8; /* Footer background color */
+        color: #153448; /* Footer text color */
+    }
+
+    .btn-primary {
+        background-color: #3C5B6F; /* Primary button background color */
+        border-color: #3C5B6F; /* Primary button border color */
+        color: #DFD0B8; /* Primary button text color */
+    }
+
+        .btn-primary:hover {
+            background-color: #153448; /* Darker shade on hover */
+            border-color: #153448; /* Darker border color on hover */
+            color: #DFD0B8; /* Button text color on hover */
+        }
+
+    .btn-danger {
+        background-color: #D9534F; /* Danger button background color */
+        border-color: #D9534F; /* Danger button border color */
+        color: #FFFFFF; /* Danger button text color */
+    }
+
+        .btn-danger:hover {
+            background-color: #C9302C; /* Darker shade on hover */
+            border-color: #C9302C; /* Darker border color on hover */
+            color: #FFFFFF; /* Button text color on hover */
+        }
+
+    .card-content {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+        .card-content .details {
+            flex: 1;
+            padding-right: 1rem; /* Space between photo and details */
+        }
+
+        .card-content .photo {
+            flex: 1;
+            max-width: 100%; /* Ensure image does not overflow */
+        }
+
+    .profile-photo {
+        width: 100%;
+        border-radius: 8px;
+        height: 400px; /* Adjust height as needed */
+        object-fit: cover; /* Ensure image covers the area without distortion */
+    }
+
+    .user-details dt {
+        font-weight: bold;
+    }
+
+    .user-details dd {
+        margin-bottom: 0.5rem;
+    }
+
+    .card-footer .btn {
+        margin-left: 0.5rem; /* Space between buttons */
+    }
+</style>

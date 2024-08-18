@@ -1,0 +1,116 @@
+﻿@{
+    ViewBag.Title = "Invoice";
+}
+
+<style>
+    body {
+        background-color: #DFD0B8; /* Light background */
+        color: #153448; /* Dark text */
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif; /* Set font family */
+    }
+
+    h2 {
+        color: #3C5B6F; /* Header color */
+        text-align: center;
+        margin-bottom: 20px; /* Add some space below the header */
+    }
+
+    .invoice-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        border: 1px solid #153448;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #3C5B6F; /* Header background color */
+        color: white; /* Header text color */
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2; /* Zebra striping for rows */
+    }
+
+    .total {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-top: 20px;
+    }
+
+    .btn-print, .btn-back {
+        background-color: #3C5B6F; /* Button background color */
+        color: white; /* Button text color */
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 20px;
+        display: inline-block; /* Change to inline-block */
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.3s, color 0.3s, padding 0.3s; /* Add transition effect */
+    }
+
+        .btn-print:hover, .btn-back:hover {
+            background-color: #DFD0B8; /* Button hover background color */
+            color: #153448; /* Button hover text color */
+            padding: 12px 22px; /* Increase padding on hover */
+        }
+</style>
+
+<div class="invoice-container">
+    <h2>Invoice</h2>
+
+    <p><strong>Email:</strong> @ViewBag.UserEmail</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.InvoiceItems)
+            {
+                <tr>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@string.Format("{0:C}", item.Product.Price)</td>
+                    <td>@string.Format("{0:C}", item.Product.Price * item.Quantity)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p class="total"><strong>Total Amount:</strong> @string.Format("{0:C}", ViewBag.TotalAmount)</p>
+
+    @if (ViewBag.Discount > 0)
+    {
+        <p class="total"><strong>Discount:</strong> @ViewBag.Discount%</p>
+        <p class="total"><strong>Final Amount:</strong> @string.Format("{0:C}", ViewBag.FinalAmount)</p>
+    }
+
+    <div class="button-container">
+        <button onclick="window.print();" class="btn-print">Print Invoice</button>
+        <a href="@Url.Action("Categories", "Shop")" class="btn-back">Back to Cart</a>
+    </div>
+</div>

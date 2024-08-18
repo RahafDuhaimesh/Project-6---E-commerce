@@ -1,0 +1,188 @@
+﻿@model Project6.Models.USER
+
+@{
+    ViewBag.Title = "Register";
+}
+
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<div class="form-horizontal form-container">
+    <h4 class="form-title">Registration in Agate!</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-content">
+        <div class="form-column">
+            @using (Html.BeginForm("Register", "Login", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <br />
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Register" class="btn btn-info" onclick="showAlert(event)" />
+                    </div>
+                </div>
+            }
+
+            <p style="color: floralwhite;">
+                <span style="color: white;">
+                    @Html.ActionLink("Have an account?", "Login", null, new { style = "color: white;" })
+                </span>
+            </p>
+            
+        </div>
+
+        <div class="image-column">
+            <img src="~/Content/OIP1.png" alt="Registration Image" class="registration-image" style="height: 250px;" />
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Form container styling */
+    .form-container {
+        padding: 20px;
+        border-radius: 10px;
+        background: linear-gradient(to bottom, #DFD0B8, #4F697A);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-width: 800px;
+        margin: 0 auto; /* Centers the entire form-container */
+    }
+
+    /* Form content styling with flexbox for layout */
+    .form-content {
+        display: flex;
+        justify-content: center; /* Centers the form content horizontally */
+        align-items: flex-start;
+        width: 100%; /* Ensures the content takes full width of the container */
+    }
+
+    /* Form column styling */
+    .form-column {
+        flex: 1;
+        max-width: 60%; /* Adjusts form width */
+        margin-right: 20px;
+    }
+
+    /* Image column styling */
+    .image-column {
+        flex-basis: 30%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .registration-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    /* Form title styling */
+    .form-title {
+        color: #3C5B6F;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Label styling */
+    .control-label {
+        color: #3C5B6F;
+        font-weight: bold;
+    }
+
+    /* Input styling */
+    .form-control {
+        border: 1px solid #3C5B6F;
+        border-radius: 5px;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+        .form-control:focus {
+            border-color: #DFD0B8;
+            box-shadow: 0 0 5px rgba(223, 208, 184, 0.5);
+        }
+
+    /* Button styling */
+    .btn-info {
+        background-color: #3C5B6F;
+        color: #DFD0B8;
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-info:hover {
+            background-color: #2A3E4C;
+        }
+
+    /* Validation message styling */
+    .text-danger {
+        color: #B22222;
+    }
+</style>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function showAlert(event) {
+            event.preventDefault(); // Prevent the form from submitting
+
+            Swal.fire({
+                title: 'Welcome in Agate',
+                text: "We wish for you a great coffee!",
+                icon: 'success',
+                confirmButtonColor: '#3C5B6F',
+                confirmButtonText: 'Login to start shopping'
+            }).then(() => {
+                // After clicking OK, submit the form
+                event.target.closest('form').submit();
+            });
+        }
+    </script>
+}
+
